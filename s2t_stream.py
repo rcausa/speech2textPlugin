@@ -43,7 +43,7 @@ def check_wav_specs(filepath):
         elif correct_specs[item[0]] == item[1] and item[0] != 'Duration':
             pass
         elif item[0] == 'Duration': 
-            if item[1] < correct_specs['Duration']:
+            if item[1] <= correct_specs['Duration']:
                 pass
             else:
                 statement += 'Duration too long.\n'
@@ -95,6 +95,6 @@ if __name__ == "__main__":
         print(check)
         
     r = send_request(filepath, AUTH_TOKEN)
-    # Stream output is a paid feature....
+    # Synchronous transcription is a paid feature...
 
   
