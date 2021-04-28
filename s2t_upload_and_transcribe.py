@@ -74,6 +74,9 @@ def transcribe(upload_response):
 if __name__ == "__main__":
     API_URL = "https://api.assemblyai.com/v2/"
 
+    with open('./auth_key.txt','r') as f:
+        AUTH_TOKEN = f.readline().rstrip('\n')
+
     filename = "./output.mp4"
     upload_response = upload(filename, AUTH_TOKEN)
     
@@ -87,4 +90,4 @@ if __name__ == "__main__":
     for word_dict in transcribe_response['words']:
         sentence += word_dict["text"] + ' '
 
-    print(f"Transcriptions:\n{sentence}")
+    print(f"Transcription:\n >> {sentence}")
