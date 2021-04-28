@@ -1,4 +1,3 @@
 /venv
 /auth_key.txt
-/output.mp4
-/output.wav
+/recordings/*

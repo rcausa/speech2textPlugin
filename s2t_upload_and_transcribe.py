@@ -2,6 +2,7 @@ import requests
 import os
 import time
 import glob
+import json
 
 def read_file(filename, chunk_size=5242880):
     """
@@ -48,7 +49,7 @@ def transcribe(upload_response):
         API_URL+'transcript',
         json = upload_response,
         headers = headers
-    )
+   )
     transcribe_response =  response.json()
     transcribe_id = transcribe_response["id"]
 
@@ -71,7 +72,7 @@ def transcribe(upload_response):
         time.sleep(0.0001)
     
 
-def parse():
+def parse_input(string):
     pass
 
 
@@ -81,11 +82,13 @@ if __name__ == "__main__":
     with open('./auth_key.txt','r') as f:
         AUTH_TOKEN = f.readline().rstrip('\n')
 
-    filename = "./output.wav"
+    filename = "./recordings/output4.wav"
     upload_response = upload(filename, AUTH_TOKEN)
     
     transcribe_json = {
-        "audio_url" : upload_response["upload_url"]
+        "audio_url" : upload_response["upload_url"],
+        "punctuate": False,
+        "format_text": False
     }
     transcribe_response = transcribe(transcribe_json)
     
@@ -94,4 +97,5 @@ if __name__ == "__main__":
     for word_dict in transcribe_response['words']:
         sentence += word_dict["text"] + ' '
 
+    
     print(f"Transcription:\n >> {sentence}")
