@@ -33,9 +33,8 @@ def upload(filename, auth_token):
 
 def transcribe(upload_response):
     """
-    Returns the transcription repsonse which includes
-    transcribed words.
-    Response'status' which can be 'queued', 'processing', 'completed'
+    Returns the transcription repsonse which includes transcribed words.
+    Response'status' can be 'queued', 'processing', 'completed'
 
     Parameters: json API response from upload.
     Returns: json API response from transcription.
@@ -65,8 +64,8 @@ def transcribe(upload_response):
 
         completion_response_json = completion_response.json()
         if completion_response_json["status"] == 'completed':
-            return completion_response_json
             waiting = False
+            return completion_response_json
             
         time.sleep(0.0001)
 
@@ -77,7 +76,7 @@ if __name__ == "__main__":
     with open('./auth_key.txt','r') as f:
         AUTH_TOKEN = f.readline().rstrip('\n')
 
-    filename = "./output.mp4"
+    filename = "./output.wav"
     upload_response = upload(filename, AUTH_TOKEN)
     
     transcribe_json = {
