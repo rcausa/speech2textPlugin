@@ -4,7 +4,9 @@ import subprocess
 
 """
 soxi: https://linux.die.net/man/1/soxi
+- Used to check .wav header information bits 
 
+ffmpeg CLI options:
 -i : input file
 -t : time (seconds)
 -ar : sampling rate (Hz)
@@ -48,7 +50,7 @@ def check_wav_specs(filepath):
             else:
                 statement += 'Duration too long.\n'
         else:
-            statement += f'Have not met requirement: {item}\n'
+            statement += f'Have not met requirement: {item[0]}\n'
 
     return statement
 

@@ -1,6 +1,7 @@
 import requests
 import os
 import time
+import glob
 
 def read_file(filename, chunk_size=5242880):
     """
@@ -34,7 +35,7 @@ def upload(filename, auth_token):
 def transcribe(upload_response):
     """
     Returns the transcription repsonse which includes transcribed words.
-    Response'status' can be 'queued', 'processing', 'completed'
+    The response 'status' can be 'queued', 'processing', 'completed'
 
     Parameters: json API response from upload.
     Returns: json API response from transcription.
@@ -68,6 +69,10 @@ def transcribe(upload_response):
             return completion_response_json
             
         time.sleep(0.0001)
+    
+
+def parse():
+    pass
 
 
 if __name__ == "__main__":
