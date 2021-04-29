@@ -93,10 +93,11 @@ if __name__ == "__main__":
     
     # Check file meets requirements:
     check = check_wav_specs(filepath)
-    if check != '':
+    if check == '':
+        r = send_request(filepath, AUTH_TOKEN)
+    else:
         print(check)
         
-    r = send_request(filepath, AUTH_TOKEN)
     # Synchronous transcription is a paid feature...
 
   
