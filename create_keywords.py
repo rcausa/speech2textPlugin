@@ -1,21 +1,28 @@
 import json
 from num2words import num2words
+import glob
 """
 Create key : value pairs where the key is a transcribed word, and
 the value is the Linux CLI command/option/file path which can be accessed.
 
 This dictionary will be used to create commands from user voice input.
+
+TO DO:
+- make sure all keys unique
+- reduce number of commands with >1 word
 """
 
 commands = {
     "open" : "open",
-    "search" : "find",
+    # "search" : "find", # wanted to make it more 'natural language'
     "find" : "find",
     "list" : "ls",
-    "print working directory" : "pwd",
+    "print directory" : "pwd",
     "change directory" : "cd",
-    "remove directory" : "rm",
+    "remove" : "rm",
+    "remove directory" : "rmdir",
     "make directory" : "mkdir",
+    # careful, make is a command already
     "move" : "mv",
     "copy" : "cp"
 }
@@ -28,20 +35,27 @@ symbols = {
     "slash" : "/",
     # "backslash" : "\\",
     "pipe" : "|",
-    "left square bracket" : "[",
-    "right square bracket" : "]",
-    "left curly bracket" : "{",
-    "right curly bracket" : "}",
+    "left square" : "[",
+    "right square" : "]",
+    "left curly" : "{",
+    "right curly" : "}",
     "left parenthesis" : "(",
     "right parenthesis" : ")",
-    "left angle bracket" : "<",
-    "right angle bracket" : ">",
+    "left angle" : "<",
+    "right angle" : ">",
+    "star" : "*",
+    "she" : "#",
+    "bang" : "!"
 }
 
-# Two convert spoken numbers (as transcribed by AssemblyAI)
-# into letters, including captial letters, to be used as options for commands
-# Need to remove dashes from num2words 'twenty-four' => 'twenty four'
+""" 
+Convert spoken numbers (as transcribed by AssemblyAI)
+into letters, including captial letters, to be used as options for commands
+Need to remove dashes from num2words 'twenty-four' => 'twenty four'
+"""
 
+# Use the word 'one' to refer to the letter 'a'
+# use the prefix 'capital' to find the capital version 'A'
 nums = list(range(ord('a'), ord('z')+1)) 
 capital_nums = list(range(ord('A'), ord('Z')+1))
 
@@ -58,12 +72,33 @@ for i in range(26):
 lowercase = dict(zip(words, letter_symbols))
 uppercase = dict(zip(capital_prefix_words, capital_letter_symbols))
 
-# Long lookup dictionary
+
+""" 
+Add list of Applications on the computer 
+"""
+
+apps = glob.glob("/Applications/*")
+# remove all but the application name
+apps = [app.split("/")[-1][:-4] for app in apps if '.app' in app] 
+# unavoidably hand-done, and will skip several on purpose
+app_keys = ['mendeley','visual','','signal','chrome','','','','','','','word','','acrobat','octave','safari','amphetamine','excel','blender','zoom','outlook','','','','','','fiji','','atom','charm','postman','powerpoint','teams','']
+# Check they align correctly:
+# for i in range(len(apps)):
+#     print(f"{i:} {apps[i]:<26} {app_keys[i]}")
+
+application_dict = dict(zip(app_keys, apps))
+# contains one unique empty string key, unfortunately
+
+# {"" : "xbar"}
+
+
+""" Create final dictionary """
 final = dict({})
 final.update(commands)
 final.update(symbols)
 final.update(lowercase)
 final.update(uppercase)
+final.update(application_dict)
 
 for k,v in final.items():
     print(f"{k:25} {v}")

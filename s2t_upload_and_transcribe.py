@@ -73,7 +73,16 @@ def transcribe(upload_response):
     
 
 def parse_input(string):
-    pass
+    with open('./keywords.json','r') as json_f:
+        cmd_dict = json.load(json_f)
+
+    cmd_string = ''
+    for s in string.split(' '):
+        try:
+            cmd_string += cmd_dict[s] + ' '
+        except:
+            print(f'String not present in dict: {s}')
+    return cmd_string
 
 
 if __name__ == "__main__":
@@ -92,10 +101,9 @@ if __name__ == "__main__":
     }
     transcribe_response = transcribe(transcribe_json)
     
-    
     sentence = ""
     for word_dict in transcribe_response['words']:
         sentence += word_dict["text"] + ' '
 
-    
     print(f"Transcription:\n >> {sentence}")
+    print(parse_input(sentence))
