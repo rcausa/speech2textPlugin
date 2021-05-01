@@ -3,6 +3,12 @@ import os
 import time
 import glob
 import json
+from word2number.w2n import word_to_num
+
+"""
+Uses the Aseembly API - https://docs.assemblyai.com/overview/getting-started
+"""
+
 
 def read_file(filename, chunk_size=5242880):
     """
@@ -73,15 +79,104 @@ def transcribe(upload_response):
     
 
 def parse_input(string):
+    """
+    Turns voice commands into Linux Terminal commands.
+    Each option must be specified separately, e.g. 
+    you cannot have 'ls -ltr', only 'ls -l -t -r'.
+
+    Parameters: speech2text string (str)
+    Returns: Linux Terminal command (str) to be executed.
+    """
     with open('./keywords.json','r') as json_f:
         cmd_dict = json.load(json_f)
 
     cmd_string = ''
-    for s in string.split(' '):
+    all_words = string.split(' ')
+    i = 0
+    capital_count = 0
+    while i < len(all_words):
+        time.sleep(0.4)
         try:
-            cmd_string += cmd_dict[s] + ' '
-        except:
-            print(f'String not present in dict: {s}')
+            # print(f'Word {i}: {all_words[i]}')
+            if all_words[i] == 'dash':
+                cmd_string += cmd_dict['dash'] # no space after '-'
+                i += 1
+            elif all_words[i] == 'capital':
+                capital_count = 1
+                i += 1
+                
+                if all_words[i] == 'twenty':
+                    double_digit = 'twenty ' + all_words[i+1]
+                    if isinstance(word_to_num(double_digit), int):
+                        cmd_string += cmd_dict['capital ' + double_digit] + ' '
+                        i += 2 
+                    else:
+                        cmd_string += cmd_dict['capital ' + 'twenty'] + ' '
+                        i += 1
+
+                    
+                elif isinstance(word_to_num(all_words[i]), int):
+                    cmd_string += cmd_dict[all_words[i]] + ' '
+                    i += 1
+                else:
+                    print('Digit not recognised.')
+                    i += 1
+                
+                
+            elif all_words[i] == 'twenty':
+                double_digit = 'twenty ' + all_words[i+1]
+                if isinstance(word_to_num(double_digit), int):
+                    cmd_string += cmd_dict[double_digit] + ' '
+                    i += 2 
+                else:
+                    cmd_string += cmd_dict['twenty'] + ' '
+                    i += 1
+            # numbers below twenty handled with the last 'else'
+                    
+            elif all_words[i] == 'left':
+                next_word = all_words[i+1]
+                if next_word == 'square':
+                    cmd_string += cmd_dict['left square']
+                    i += 2
+                elif next_word == 'curly':
+                    cmd_string += cmd_dict['left curly']
+                    i += 2
+                elif next_word == 'angle':
+                    cmd_string += cmd_dict['left angle']
+                    i += 2
+                elif next_word == 'parenthesis':
+                    cmd_string += cmd_dict['left parenthesis']
+                    i += 2
+                else: 
+                    print('Bracket not recognised.')
+                    i += 1
+
+            elif all_words[i] == 'right':
+                next_word = all_words[i+1]
+                if next_word == 'square':
+                    cmd_string += cmd_dict['right square']
+                    i += 2
+                elif next_word == 'curly':
+                    cmd_string += cmd_dict['right curly']
+                    i += 2
+                elif next_word == 'angle':
+                    cmd_string += cmd_dict['right angle']
+                    i += 2
+                elif next_word == 'parenthesis':
+                    cmd_string += cmd_dict['right parenthesis']
+                    i += 2
+                else: 
+                    print('Bracket not recognised.')
+                    i += 1
+                
+            else:
+                cmd_string += cmd_dict[all_words[i]] + ' '
+                i += 1
+            capital_count = 0
+
+        except: # handle spaces, punctuation, empty strings, chars not in dict.
+            print(f'Word not present in dict: {all_words[i]}')
+            i += 1
     return cmd_string
 
 
@@ -102,8 +197,11 @@ if __name__ == "__main__":
     transcribe_response = transcribe(transcribe_json)
     
     sentence = ""
+    print('Number of transcribed words: ',len(transcribe_response['words']))
     for word_dict in transcribe_response['words']:
         sentence += word_dict["text"] + ' '
 
     print(f"Transcription:\n >> {sentence}")
+
+    # sentence = 'list dash capital twenty four left curly dollar zero right curly'
     print(parse_input(sentence))
