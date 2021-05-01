@@ -13,16 +13,16 @@ TO DO:
 """
 
 commands = {
+    # trying to limit to one-word cmds to limit the logic involved!
     "open" : "open",
     # "search" : "find", # wanted to make it more 'natural language'
     "find" : "find",
     "list" : "ls",
-    "print directory" : "pwd",
-    "change directory" : "cd",
+    "print" : "pwd",
+    "change" : "cd",
     "remove" : "rm",
-    "remove directory" : "rmdir",
-    "make directory" : "mkdir",
-    # careful, make is a command already
+    "make" : "mkdir",
+    # make is a command already
     "move" : "mv",
     "copy" : "cp"
 }
@@ -44,8 +44,12 @@ symbols = {
     "left angle" : "<",
     "right angle" : ">",
     "star" : "*",
-    "she" : "#",
-    "bang" : "!"
+    "hash" : "#",
+    "bang" : "!",
+    "dollar" : "$",
+    "hat" : "^",
+    "ampersand" : "&",
+    "zero" : "0"
 }
 
 """ 
@@ -83,13 +87,12 @@ apps = [app.split("/")[-1][:-4] for app in apps if '.app' in app]
 # unavoidably hand-done, and will skip several on purpose
 app_keys = ['mendeley','visual','','signal','chrome','','','','','','','word','','acrobat','octave','safari','amphetamine','excel','blender','zoom','outlook','','','','','','fiji','','atom','charm','postman','powerpoint','teams','']
 # Check they align correctly:
-# for i in range(len(apps)):
-#     print(f"{i:} {apps[i]:<26} {app_keys[i]}")
+for i in range(len(apps)):
+    print(f"{i:} {apps[i]:<26} {app_keys[i]}")
 
 application_dict = dict(zip(app_keys, apps))
-# contains one unique empty string key, unfortunately
+application_dict.pop("") # have one unique key which is an empty string, which should be removed.
 
-# {"" : "xbar"}
 
 
 """ Create final dictionary """
@@ -101,7 +104,7 @@ final.update(uppercase)
 final.update(application_dict)
 
 for k,v in final.items():
-    print(f"{k:25} {v}")
+    print(f"{k :<25} {v}")
 
 with open('keywords.json','w') as f :
     json.dump(final,f)
